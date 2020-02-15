@@ -102,33 +102,37 @@ app.get('/callback', function(req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          console.log(body);
+            console.log(body);
+  
+            var ids = new Array;
+  
+            var playlists = body['items']; 
+            playlists.forEach(playlist => ids.push(playlist['id']));
+            console.log('track: ' + JSON.stringify(playlists[0]['tracks']));
+            console.log("ids:" + ids);
+            //var id_options;
+            var all_tracks = new Array;
+  
+            for (id in ids) {
+                console.log('access_token', access_token);
 
-          var ids = new Array;
-
-          var items = body['items']; 
-          items.forEach(playlist => ids.push(playlist['id']));
-          console.log("ids:" + ids);
-
-          var id_options;
-          var all_tracks = new Array;
-
-          for (id in ids) {
-              id_options = {
-                url: 'https://api.spotify.com/v1/me/playlists/' + id + '/tracks',
-                headers: { 'Authorization': 'Bearer ' + access_token },
-                json: true
-              }
-
-              request.get(id_options, function(error, response, body) {
-                console.log('track: '+ body);
-                all_tracks.push(body);
-              });
-    
-          }
-          
-        });
-
+                let id_options = {
+                  url: 'https://api.spotify.com/v1/playlists/' + ids[id] + '/tracks',
+                  headers: { 'Authorization': 'Bearer ' + access_token },
+                  json: true
+                }
+  
+                request.get(id_options, function(error, response, body) {
+                    // console.log('error', JSON.stringify(error,null,2));
+                    // console.log('response', JSON.stringify(response,null,2));
+                    console.log('body', JSON.stringify(body,null,2));
+                  //console.log('url: '+ id_options['url']);
+                 // console.log('track: '+ body['items']);
+                  all_tracks.push(body);
+                });
+                break;
+            }
+          });
         // we can also pass the token to the browser to make requests from there
         res.redirect('/#' +
           querystring.stringify({
