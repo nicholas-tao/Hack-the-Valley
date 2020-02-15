@@ -130,7 +130,7 @@ app.get('/callback', function(req, res) {
                  // console.log('track: '+ body['items']);
                   all_tracks.push(body);
                 });
-                break;
+                console.log(all_tracks);
             }
           });
         // we can also pass the token to the browser to make requests from there
