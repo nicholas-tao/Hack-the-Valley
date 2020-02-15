@@ -46,7 +46,7 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email';
+  var scope = 'user-read-private user-read-email playlist-read-collaborative playlist-read-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -56,6 +56,8 @@ app.get('/login', function(req, res) {
       state: state
     }));
 });
+
+app.get
 
 app.get('/callback', function(req, res) {
 
@@ -93,7 +95,7 @@ app.get('/callback', function(req, res) {
             refresh_token = body.refresh_token;
 
         var options = {
-          url: 'https://api.spotify.com/v1/me',
+          url: 'https://api.spotify.com/v1/me/playlists/',
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
@@ -101,6 +103,30 @@ app.get('/callback', function(req, res) {
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           console.log(body);
+
+          var ids = new Array;
+
+          var items = body['items']; 
+          items.forEach(playlist => ids.push(playlist['id']));
+          console.log("ids:" + ids);
+
+          var id_options;
+          var all_tracks = new Array;
+
+          for (id in ids) {
+              id_options = {
+                url: 'https://api.spotify.com/v1/me/playlists/' + id + '/tracks',
+                headers: { 'Authorization': 'Bearer ' + access_token },
+                json: true
+              }
+
+              request.get(id_options, function(error, response, body) {
+                console.log('track: '+ body);
+                all_tracks.push(body);
+              });
+    
+          }
+          
         });
 
         // we can also pass the token to the browser to make requests from there
