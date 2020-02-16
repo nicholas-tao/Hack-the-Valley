@@ -12,6 +12,7 @@ var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+const port = process.env.PORT || 8888;
 
 var client_id = '282c01d3abd34d04a9dfa45af7f6b4b2'; // Your client id
 var client_secret = '1e54bde5cab74e5ba50bfc18d029f126'; // Your secret
@@ -32,16 +33,22 @@ var generateRandomString = function(length) {
   return text;
 };
 
+let authSuccess = false;
+
 var stateKey = 'spotify_auth_state';
 
 var app = express();
+
+app.get('/express_backend', (req, res) => {
+  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
+});
 
 app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
 
 app.get('/login', function(req, res) {
-
+  //res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
@@ -57,10 +64,8 @@ app.get('/login', function(req, res) {
     }));
 });
 
-app.get
 
 app.get('/callback', function(req, res) {
-
   // your application requests refresh and access tokens
   // after checking the state parameter
 
@@ -153,12 +158,14 @@ app.get('/callback', function(req, res) {
 
           });
         // we can also pass the token to the browser to make requests from there
+        authSuccess = true;
         res.redirect('/#' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
           }));
       } else {
+        authSuccess = true;
         res.redirect('/#' +
           querystring.stringify({
             error: 'invalid_token'
@@ -166,10 +173,11 @@ app.get('/callback', function(req, res) {
       }
     });
   }
+  //res.seqwnd({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
 });
 
-app.get('/refresh_token', function(req, res) {
 
+app.get('/refresh_token', function(req, res) {
   // requesting access token from refresh token
   var refresh_token = req.query.refresh_token;
   var authOptions = {
@@ -199,5 +207,5 @@ function calculate_Sentiment(A){
     console.dir("result: " + JSON.stringify(result.comparative)); 
 }
 
-console.log('Listening on 8888');
-app.listen(8888);
+//console.log('Listening on 5000');
+app.listen(port, () => console.log(`Listening on port ${port}`));

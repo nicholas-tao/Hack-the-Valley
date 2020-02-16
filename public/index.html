@@ -1,26 +1,22 @@
 <!doctype html>
 <html>
   <head>
-    <title>Example of the Authorization Code flow with Spotify</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <style type="text/css">
-      #login, #loggedin {
-        display: none;
-      }
-      .text-overflow {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 500px;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="index.css">
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+  <title>Sign in</title>
   </head>
 
   <body>
     <div class="container">
-      <div id="login">
-        <h1>This is an example of the Authorization Code flow</h1>
-        <a href="/login" class="btn btn-primary">Log in with Spotify</a>
+      <div id="login" style="background-color: white; border-radius: 15px; height: 400px; display:inline-block;">
+        <p class="sign" align="center">Sign in</p>
+    <form class="form1">
+      <input class="un " type="text" align="center" placeholder="Username">
+      <input class="pass" type="password" align="center" placeholder="Password">
+      <a class="submit" href='/login' align="center">Sign in</a>
+      <p class="forgot" align="center" style="color: black;"><a href="#">Forgot Password?</p>
       </div>
       <div id="loggedin">
         <div id="user-profile">
