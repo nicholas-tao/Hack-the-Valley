@@ -101,6 +101,7 @@ app.get('/callback', function(req, res) {
         };
     
         // use the access token to access the Spotify Web API
+        // Gets array of playlists
         request.get(options, function(error, response, body) {
             //console.log(body);
   
@@ -113,6 +114,8 @@ app.get('/callback', function(req, res) {
             //console.log('track: ' + JSON.stringify(playlists[0]['tracks']));
             //console.log("ids:" + ids);
 
+            let promises = [];
+            
             for (id in ids) {
                 //console.log('access_token', access_token);
 
@@ -121,20 +124,33 @@ app.get('/callback', function(req, res) {
                   headers: { 'Authorization': 'Bearer ' + access_token },
                   json: true
                 }
-  
-                request.get(id_options, function(error, response, body) {
-                    // console.log('error', JSON.stringify(error,null,2));
-                     //console.log('response', JSON.stringify(response,null,2));
-                    //console.log('body', JSON.stringify(body,null,2));
-                  //console.log('url: '+ id_options['url']);
-                  //console.log('this track name: '+ body.items[0].track.name);
-                  track_names.push(body.items[0].track.name);
-                  console.log('all track names: '+ track_names);
-                  all_tracks.push(body);
-                  calculate_Sentiment(track_names);
-                });
+                
+                // Gets tracks from playlist
+                // Tracks from the playlist are stored in body
+                promises.push(new Promise((resolve, reject) => {
+                    request.get(id_options, function(error, response, body) {
+                        // console.log('error', JSON.stringify(error,null,2));
+                         //console.log('response', JSON.stringify(response,null,2));
+                        //console.log('body', JSON.stringify(body,null,2));
+                      //console.log('url: '+ id_options['url']);
+                      //console.log('this track name: '+ body.items[0].track.name);
+                      track_names.push(body.items[0].track.name);
+                      //console.log('all track names: '+ track_names);
+                      all_tracks.push(body);
+                      //calculate_Sentiment(track_names);
+                      resolve(true);
+                    });
+                    
+                }))
+                
+                Promise.all(promises).then(result => {
+                    console.log('track names:' + track_names);
+                    calculate_Sentiment(track_names);
+                    //console.log('result', result);
+                })
                 
             }
+
           });
         // we can also pass the token to the browser to make requests from there
         res.redirect('/#' +
